@@ -1,0 +1,104 @@
+Beginner
+Exit screens in terminal by pressing q
+Use Tab to auto complete names in terminal
+
+Cloning an existing repository from Github.
+git clone https://github.com/Afshin-A/LinkedListStudy2.git	
+		To get the link, go to profile -> repository -> code -> HTTPS
+Next, we make changes to code.
+git status	Lists all changes made to the files in local repository. If files are listed as untracked, it means that git doesn't know about the files. So we must first "add" them to git before we can commit the changes:
+git add ./*	Adds all files in the current directory
+
+We are now ready to commit (save) our changes:
+git commit -m "LAPTOP-CBAQGUSS TEST" -m "Commit made from LAPTOP-CBAQGUSS as a test"	
+		When we commit the changes, we can also document the changes made. -m stands for message: the first -m is title, and the second 	is description.
+This local repository is not live yet. To make it live, we need to push. We must first prove to Github we own the account we are 		pushing the repository into. We can do so by using ssh keys.
+How to generate ssh key locally:
+ssh-keygen -t rsa -b 4096 -C "afshin.ebadehahvazi@snhu.edu"
+-t for type	-b 4096 determines the strength of the key. And finally we have the email address associated with Github account.
+We are then prompted to name the file and optionally put a password on it. here, we will name the file "key"
+This generates two files: one with .pub extention (this is the public key), and a second file without any extentions (this is the private key). We then need to upload the public key to github via settings at github.com/settings/keys.
+To view the public key, use the following command:
+cat ./key.pub 	The cat command reads from (any) file and and writes to the output. This basically prints the public key.
+
+Next, we need to make sure the local git command interface knows about the generated key. This step was not needed on my Windows 10 laptop (CBAQGUSS). CORRECTION. This step is absolutely necessary. Read further.
+
+We are finally ready to push our repository live
+git push origin master
+origin is a keyword that alludes to the location of the repository. master is the branch we are pushing into.
+
+We just cloned an existing repository from Github, made changes, commited those changes, then pushed the repository online.
+
+What if we wanted to create a repository from scratch offline?
+First, create a repository (folder) and add files as needed. Navigate to the folder using the terminal command cd. Then,
+git init
+git add ./*	Can also use: git add . 
+Next we need to push the repository online:
+git push origin master	This fails because git doesn't know where to push. Since we didn't clone this repository, "origin" doesn't have any ties to any online repositories.
+To fix this problem, we go to Github and create an empty repository. We then create a reference to the online repository as follows:
+git remote add origin git@github.com:Afshin-A/LinkedListStudy2Local.git
+git remove -v	This shows any remote repositories connected to this local repository
+
+We need to add our keys to the Git by using Git Bash. Here's how: https://www.youtube.com/watch?v=WgZIv5HI44o
+Then,
+git push -u origin master	With the added -u, we may use simply enter "git push" to push our commits, like a shortcut.
+
+Branching
+git branch	Checks the existing branches. The current branch that we are on will have a * next to it.
+git checkout -b alt-branch	Creates a new branch named alt-branch.
+git checkout master		Switch backt to master branch
+git checkout alt-branch		Switch backt to alt-branch branch
+Next, we make some changes to the repository. Then, we:
+git add ./*
+git commit
+if we now switch backt to master branch, we see the changes made don't appear, and are only present in one branch.
+git diff	This is supposed to show the difference between the branches, just like the Github interface does online. But it doesn't work for me.
+
+Now, to push online, we must first tell git where (what branch) to push to online. (This is called setting an upstream, as evident in the code)
+git push --set-upstream origin alternate-branch
+
+Pull request (pr): a request to have code pulled into another branch
+to merge code, we need to make a pull request from the alt-branch to the master branch
+Github allows us to make a pull request online.
+After completing the pull request and mering the branches, we will need to pull the changes again to view locally:
+git pull	Since an upstream has already been set, we can just enter this command. Otherwise, we would have to type: git pull origin master
+Since we are done with alt-branch, we can delete it as follows:
+git branch -d alt-branch
+git branch
+
+Merge Conflicts
+This happens when multiple people edit the same lines in the same files. Git doesn't know what to save upon merging.
+To create the situation, first we add an html file to our master branch. Add some lines to the file. add, commit, then push.
+Now create a new branch: quick-test. Add a new line to the html file. add and commit as follows:
+If files are already committed beforehand and are only edited, there is a shortcut to commit the changes made; instead of first adding them, then commiting, we can combine the two steps:
+git commit -am "added !!!"	adds and commits at the same time
+Go back to master, and modify the same line we just modified in the quick-test branch.
+Now go back to quick-test:
+git checkout quick-test
+git diff master		Checks the differences between current branch and master branch
+git merge master	Attempts to merge current branch with master, but fails because of merge conflict. Git doesn't know if it should keep the changes made in master branch, or in quick-test branch. Github also has an interface for this issue. More sophisticated code editors like VC Code will suggest ways to fix the issue: it changes so that we are building upon existing code in the master branch.
+
+Undoing Commits
+Make some changes to the html file first.
+git status	untracked changes
+git add .	files are tracked, ready to be commited
+git reset	undo the tracking for all files. You can also also undo a specific file: git reset helloWorld.html
+git status	There are untracked changes
+Now let's track and commit:
+git add .
+git commit -m "added more info to html file"
+git status	all changes have been commit.
+What if we made a mistake and want to undo the commit?
+git reset HEAD~1	HEAD is a pointer to the last commit. HEAD~1 means HEAD will now point to one commit back, undoing the most recent commit in effect.
+
+git log		This will show a log of all commits made. You will see a list of all commits made in reverse chronological order. To unsave all the changes made past a particular point, copy the hash number associated with the commit made (like b70d9dccda4b5083fc5a395984d171b6acdec7ad). Then:
+git reset b70d9dccda4b5083fc5a395984d171b6acdec7ad	All changes made passed this point are no longer saved, although they will still appear in the files. But they're not saved.
+To completely erase the changes:
+git reset --hard b70d9dccda4b5083fc5a395984d171b6acdec7ad
+
+
+Forking
+Allows full access to other projects on Github. We could then make pull requests and add contributions to the original project.
+
+
+Intermediate
